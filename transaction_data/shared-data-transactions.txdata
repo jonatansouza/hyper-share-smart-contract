@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "sharedDataExists",
+        "transactionLabel": "A test sharedDataExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createSharedData",
+        "transactionLabel": "A test createSharedData transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readSharedData",
+        "transactionLabel": "A test readSharedData transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateSharedData",
+        "transactionLabel": "A test updateSharedData transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteSharedData",
+        "transactionLabel": "A test deleteSharedData transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]
