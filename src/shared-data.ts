@@ -5,22 +5,10 @@
 import { Object, Property } from 'fabric-contract-api';
 
 export enum PermissionTypes {
-    Granted,
-    Denied,
-    NA
+    Granted = 1,
+    Denied = 2,
+    NA = 3
 }
-
-export interface SharedDataModel {
-    ownerId: string;
-    sharedWith: string[];
-    sharedDataDescription: string;
-    updated?: number;
-    requester?: string;
-    permission?: PermissionTypes;
-    mode?: string; // method name
-
-}
-
 @Object()
 export class SharedData {
 
@@ -28,7 +16,7 @@ export class SharedData {
     public ownerId: string;
 
     @Property()
-    public sharedWith: string[];
+    public sharedWith: string;
 
     @Property()
     public sharedDataDescription: string;
@@ -40,7 +28,7 @@ export class SharedData {
     public requester: string;
 
     @Property()
-    public permission: PermissionTypes;
+    public permission: number;
 
     @Property()
     public mode: string; // method name

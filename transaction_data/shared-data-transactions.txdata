@@ -12,32 +12,38 @@
         "transactionLabel": "A test createSharedData transaction",
         "arguments": [
             "001",
-            "some value"
+            "JohnDoe@somewhere.com",
+            "My awesome data",
+            1623856110467
         ],
         "transientData": {}
     },
     {
         "transactionName": "readSharedData",
-        "transactionLabel": "A test readSharedData transaction",
+        "transactionLabel": "A test createSharedData transaction",
         "arguments": [
-            "001"
+            "001",
+            "JohnDoe@somewhere.com"
         ],
         "transientData": {}
     },
     {
         "transactionName": "updateSharedData",
-        "transactionLabel": "A test updateSharedData transaction",
+        "transactionLabel": "A test update transaction",
         "arguments": [
             "001",
-            "some other value"
+            "JohnDoe@somewhere.com",
+            "My awesome data",
+            1623856110467
         ],
         "transientData": {}
     },
     {
         "transactionName": "deleteSharedData",
-        "transactionLabel": "A test deleteSharedData transaction",
+        "transactionLabel": "A test delete transaction",
         "arguments": [
-            "001"
+            "001",
+            "JohnDoe@somewhere.com"
         ],
         "transientData": {}
     }
