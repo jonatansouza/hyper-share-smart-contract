@@ -3,6 +3,7 @@
  */
 
 import { Context, Contract, Info, Returns, Transaction } from 'fabric-contract-api';
+import { Iterators } from 'fabric-shim';
 import { PermissionTypes, SharedData } from './shared-data';
 
 @Info({title: 'SharedDataContract', description: 'My Smart Contract' })
@@ -84,4 +85,44 @@ export class SharedDataContract extends Contract {
         await ctx.stub.deleteState(sharedDataId);
     }
 
+    @Transaction(false)
+    @Returns('SharedData')
+    public async historySharedData(ctx: Context, sharedDataId: string): Promise<SharedData[]> {
+        const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
+        if (!exists) {
+            throw new Error(`The shared data ${sharedDataId} does not exist`);
+        }
+        const result: SharedData[] = [];
+        const iterator: Iterators.HistoryQueryIterator = await ctx.stub.getHistoryForKey(sharedDataId);
+        let current = await iterator.next();
+        while(!current.done) {
+            if(current.value) {
+                const data = JSON.parse(current.value.value.toString())
+                result.push(data);
+            }
+            current = await iterator.next();
+        }
+        await iterator.close();
+        return result;
+    }
+
+    @Transaction(false)
+    @Returns('SharedData')
+    public async allSharedDataFromOwner(ctx: Context, ownerId: string): Promise<SharedData[]> {
+        const query = {
+            selector: { ownerId }
+        };
+        const result: SharedData[] = [];
+        const iterator: Iterators.StateQueryIterator = await ctx.stub.getQueryResult(JSON.stringify(query));
+        let current = await iterator.next();
+        while(!current.done) {
+            if(current.value) {
+                const data = JSON.parse(current.value.value.toString())
+                result.push(data);
+            }
+            current = await iterator.next();
+        }
+        await iterator.close();
+        return result;
+    }
 }

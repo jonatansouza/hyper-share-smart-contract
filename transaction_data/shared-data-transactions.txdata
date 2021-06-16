@@ -46,5 +46,21 @@
             "JohnDoe@somewhere.com"
         ],
         "transientData": {}
+    },
+    {
+        "transactionName": "historySharedData",
+        "transactionLabel": "A test history transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "allSharedDataFromOwner",
+        "transactionLabel": "A test all data from owner transaction",
+        "arguments": [
+            "JohnDoe@somewhere.com"
+        ],
+        "transientData": {}
     }
 ]
