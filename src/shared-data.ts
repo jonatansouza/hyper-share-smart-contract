@@ -13,6 +13,9 @@ export enum PermissionTypes {
 export class SharedData {
 
     @Property()
+    public id: string;
+
+    @Property()
     public ownerId: string;
 
     @Property()

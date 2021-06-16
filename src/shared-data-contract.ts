@@ -5,6 +5,7 @@
 import { Context, Contract, Info, Returns, Transaction } from 'fabric-contract-api';
 import { Iterators } from 'fabric-shim';
 import { PermissionTypes, SharedData } from './shared-data';
+import { SharedDataHelper } from './shared-data-helper.utils';
 
 @Info({title: 'SharedDataContract', description: 'My Smart Contract' })
 export class SharedDataContract extends Contract {
@@ -23,6 +24,7 @@ export class SharedDataContract extends Contract {
             throw new Error(`The shared data ${sharedDataId} already exists`);
         }
         const sharedData: SharedData = new SharedData();
+        sharedData.id = sharedDataId;
         sharedData.ownerId = requester;
         sharedData.sharedWith = '';
         sharedData.sharedDataDescription = sharedDataDescription;
@@ -52,8 +54,8 @@ export class SharedDataContract extends Contract {
     @Transaction()
     public async updateSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<void> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
-        if (exists) {
-            throw new Error(`The shared data ${sharedDataId} already exists`);
+        if (!exists) {
+            throw new Error(`The shared data ${sharedDataId} does not exists`);
         }
         const data: Uint8Array = await ctx.stub.getState(sharedDataId);
         if(!data) {
@@ -97,7 +99,7 @@ export class SharedDataContract extends Contract {
         let current = await iterator.next();
         while(!current.done) {
             if(current.value) {
-                const data = JSON.parse(current.value.value.toString())
+                const data = JSON.parse(current.value.value.toString());
                 result.push(data);
             }
             current = await iterator.next();
@@ -117,12 +119,74 @@ export class SharedDataContract extends Contract {
         let current = await iterator.next();
         while(!current.done) {
             if(current.value) {
-                const data = JSON.parse(current.value.value.toString())
+                const data = JSON.parse(current.value.value.toString());
                 result.push(data);
             }
             current = await iterator.next();
         }
         await iterator.close();
         return result;
+    }
+
+    @Transaction()
+    public async grantAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<void> {
+        const data: Uint8Array = await ctx.stub.getState(sharedDataId);
+        if(!data) {
+            throw new Error(`The shared data ${sharedDataId} does not exists`);
+        }
+        const sharedData: SharedData = JSON.parse(data.toString()) as SharedData;
+        if(sharedData.ownerId !== requester) {
+            throw new Error(`The shared data ${sharedDataId} does not belong to ${requester}`);
+        }
+        const sharedWith = SharedDataHelper.sharedWithToArray(sharedData.sharedWith);
+        if(sharedWith.includes(thirdUser)) {
+            throw new Error(`The shared data ${sharedDataId} already allow ${thirdUser}`);
+        }
+        sharedWith.push(thirdUser);
+        sharedData.sharedWith = SharedDataHelper.sharedWithToString(sharedWith);
+        sharedData.mode = 'grantAccess';
+        sharedData.updated = timestamp;
+        sharedData.permission = PermissionTypes.NA;
+        const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
+        await ctx.stub.putState(sharedDataId, buffer);
+    }
+    @Transaction()
+    public async revokeAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<void> {
+        const data: Uint8Array = await ctx.stub.getState(sharedDataId);
+        if(!data) {
+            throw new Error(`The shared data ${sharedDataId} does not exists`);
+        }
+        const sharedData: SharedData = JSON.parse(data.toString()) as SharedData;
+        if(sharedData.ownerId !== requester) {
+            throw new Error(`The shared data ${sharedDataId} does not belong to ${requester}`);
+        }
+        const sharedWith = SharedDataHelper.sharedWithToArray(sharedData.sharedWith);
+        if(!sharedWith.includes(thirdUser)) {
+            throw new Error(`The shared data ${sharedDataId} already does not allow ${thirdUser}`);
+        }
+        const removed = sharedWith.filter(el => el !== thirdUser);
+        sharedData.sharedWith = SharedDataHelper.sharedWithToString(removed);
+        sharedData.mode = 'revokeAccess';
+        sharedData.updated = timestamp;
+        sharedData.permission = PermissionTypes.NA;
+        const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
+        await ctx.stub.putState(sharedDataId, buffer);
+    }
+    @Transaction()
+    public async requestPermission(ctx: Context, sharedDataId: string, requester: string, timestamp: number): Promise<boolean> {
+        const data: Uint8Array = await ctx.stub.getState(sharedDataId);
+        if(!data) {
+            throw new Error(`The shared data ${sharedDataId} does not exists`);
+        }
+        const sharedData: SharedData = JSON.parse(data.toString()) as SharedData;
+        const sharedWith = SharedDataHelper.sharedWithToArray(sharedData.sharedWith);
+        const isAllowed = sharedWith.includes(requester);
+        sharedData.mode = 'requestPermission';
+        sharedData.requester = requester;
+        sharedData.updated = timestamp;
+        sharedData.permission = isAllowed ? PermissionTypes.Granted : PermissionTypes.Denied;
+        const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
+        await ctx.stub.putState(sharedDataId, buffer);
+        return isAllowed;
     }
 }

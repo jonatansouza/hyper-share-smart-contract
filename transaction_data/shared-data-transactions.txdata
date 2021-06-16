@@ -62,5 +62,37 @@
             "JohnDoe@somewhere.com"
         ],
         "transientData": {}
+    },
+    {
+        "transactionName": "grantAccess",
+        "transactionLabel": "A test grant access transaction",
+        "arguments": [
+            "001",
+            "JohnDoe@somewhere.com",
+            "Foo@somewhere.com",
+            1623856110467
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "revokeAccess",
+        "transactionLabel": "A test grant access transaction",
+        "arguments": [
+            "001",
+            "JohnDoe@somewhere.com",
+            "Foo@somewhere.com",
+            1623856110467
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "requestPermission",
+        "transactionLabel": "A test grant access transaction",
+        "arguments": [
+            "001",
+            "JohnDoe@somewhere.com",
+            1623856110467
+        ],
+        "transientData": {}
     }
 ]
