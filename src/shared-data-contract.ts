@@ -18,7 +18,8 @@ export class SharedDataContract extends Contract {
     }
 
     @Transaction()
-    public async createSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<void> {
+    @Returns('SharedData')
+    public async createSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<SharedData> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
         if (exists) {
             throw new Error(`The shared data ${sharedDataId} already exists`);
@@ -34,6 +35,7 @@ export class SharedDataContract extends Contract {
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
+        return sharedData;
     }
 
     @Transaction(false)
@@ -52,7 +54,8 @@ export class SharedDataContract extends Contract {
     }
 
     @Transaction()
-    public async updateSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<void> {
+    @Returns('SharedData')
+    public async updateSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<SharedData> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
         if (!exists) {
             throw new Error(`The shared data ${sharedDataId} does not exists`);
@@ -71,10 +74,12 @@ export class SharedDataContract extends Contract {
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
+        return sharedData;
     }
 
     @Transaction()
-    public async deleteSharedData(ctx: Context, sharedDataId: string, requester: string): Promise<void> {
+    @Returns('SharedData')
+    public async deleteSharedData(ctx: Context, sharedDataId: string, requester: string): Promise<SharedData> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
         if (!exists) {
             throw new Error(`The shared data ${sharedDataId} does not exist`);
@@ -85,6 +90,8 @@ export class SharedDataContract extends Contract {
             throw new Error(`The shared data ${sharedDataId} does not belong to ${requester}`);
         }
         await ctx.stub.deleteState(sharedDataId);
+        return sharedData;
+
     }
 
     @Transaction(false)
@@ -129,7 +136,8 @@ export class SharedDataContract extends Contract {
     }
 
     @Transaction()
-    public async grantAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<void> {
+    @Returns('SharedData')
+    public async grantAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<SharedData> {
         const data: Uint8Array = await ctx.stub.getState(sharedDataId);
         if(!data) {
             throw new Error(`The shared data ${sharedDataId} does not exists`);
@@ -149,9 +157,11 @@ export class SharedDataContract extends Contract {
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
+        return sharedData;
     }
     @Transaction()
-    public async revokeAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<void> {
+    @Returns('SharedData')
+    public async revokeAccess(ctx: Context, sharedDataId: string, requester: string, thirdUser: string, timestamp: number): Promise<SharedData> {
         const data: Uint8Array = await ctx.stub.getState(sharedDataId);
         if(!data) {
             throw new Error(`The shared data ${sharedDataId} does not exists`);
@@ -171,6 +181,7 @@ export class SharedDataContract extends Contract {
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
+        return sharedData;
     }
     @Transaction()
     public async requestPermission(ctx: Context, sharedDataId: string, requester: string, timestamp: number): Promise<boolean> {
