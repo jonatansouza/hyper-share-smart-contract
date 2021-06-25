@@ -71,6 +71,7 @@ export class SharedDataContract extends Contract {
         sharedData.sharedDataDescription = sharedDataDescription;
         sharedData.mode = 'updateSharedData';
         sharedData.updated = timestamp;
+        sharedData.requester = requester;
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
@@ -154,6 +155,7 @@ export class SharedDataContract extends Contract {
         sharedData.sharedWith = SharedDataHelper.sharedWithToString(sharedWith);
         sharedData.mode = 'grantAccess';
         sharedData.updated = timestamp;
+        sharedData.requester = requester;
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
@@ -178,6 +180,7 @@ export class SharedDataContract extends Contract {
         sharedData.sharedWith = SharedDataHelper.sharedWithToString(removed);
         sharedData.mode = 'revokeAccess';
         sharedData.updated = timestamp;
+        sharedData.requester = requester;
         sharedData.permission = PermissionTypes.NA;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
