@@ -94,5 +94,13 @@
             1623856110467
         ],
         "transientData": {}
+    },
+    {
+        "transactionName": "AllSharedWithThird",
+        "transactionLabel": "A test shared from third transaction",
+        "arguments": [
+            "JohnDoe@somewhere.com"
+        ],
+        "transientData": {}
     }
 ]

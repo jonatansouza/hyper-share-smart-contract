@@ -200,4 +200,27 @@ export class SharedDataContract extends Contract {
         await ctx.stub.putState(sharedDataId, buffer);
         return isAllowed;
     }
+    @Transaction(false)
+    @Returns('SharedData')
+    public async AllSharedWithThird(ctx: Context, thirdUser: string): Promise<SharedData[]> {
+        const query = {
+            selector: {
+                sharedWith: {
+                    $regex: `.*${thirdUser}.*`
+                }
+            }
+        };
+        const result: SharedData[] = [];
+        const iterator: Iterators.StateQueryIterator = await ctx.stub.getQueryResult(JSON.stringify(query));
+        let current = await iterator.next();
+        while(!current.done) {
+            if(current.value) {
+                const data = JSON.parse(current.value.value.toString());
+                result.push(data);
+            }
+            current = await iterator.next();
+        }
+        await iterator.close();
+        return result;
+    }
 }
