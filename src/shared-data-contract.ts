@@ -19,7 +19,7 @@ export class SharedDataContract extends Contract {
 
     @Transaction()
     @Returns('SharedData')
-    public async createSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<SharedData> {
+    public async createSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, bucket: string, resourceLocation: string, timestamp: number): Promise<SharedData> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
         if (exists) {
             throw new Error(`The shared data ${sharedDataId} already exists`);
@@ -33,6 +33,8 @@ export class SharedDataContract extends Contract {
         sharedData.updated = timestamp;
         sharedData.requester = requester;
         sharedData.permission = PermissionTypes.NA;
+        sharedData.bucket = bucket;
+        sharedData.resourceLocation = resourceLocation;
         const buffer: Buffer = Buffer.from(JSON.stringify(sharedData));
         await ctx.stub.putState(sharedDataId, buffer);
         return sharedData;
@@ -55,7 +57,7 @@ export class SharedDataContract extends Contract {
 
     @Transaction()
     @Returns('SharedData')
-    public async updateSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, timestamp: number): Promise<SharedData> {
+    public async updateSharedData(ctx: Context, sharedDataId: string, requester: string, sharedDataDescription: string, bucket: string, resourceLocation: string ,timestamp: number): Promise<SharedData> {
         const exists: boolean = await this.sharedDataExists(ctx, sharedDataId);
         if (!exists) {
             throw new Error(`The shared data ${sharedDataId} does not exists`);
@@ -68,7 +70,9 @@ export class SharedDataContract extends Contract {
         if(sharedData.ownerId !== requester) {
             throw new Error(`The shared data ${sharedDataId} does not belong to ${requester}`);
         }
-        sharedData.sharedDataDescription = sharedDataDescription;
+        sharedData.sharedDataDescription = sharedDataDescription || sharedData.sharedDataDescription;
+        sharedData.bucket = bucket || sharedData.bucket;
+        sharedData.resourceLocation = resourceLocation || sharedData.resourceLocation;
         sharedData.mode = 'updateSharedData';
         sharedData.updated = timestamp;
         sharedData.requester = requester;

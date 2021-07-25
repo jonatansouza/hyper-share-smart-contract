@@ -35,4 +35,10 @@ export class SharedData {
 
     @Property()
     public mode: string; // method name
+
+    @Property()
+    public bucket: string; // bucket where asset is
+
+    @Property()
+    public resourceLocation: string; // folder inside bucket where asset is
 }
