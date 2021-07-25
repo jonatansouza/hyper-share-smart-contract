@@ -52,12 +52,12 @@ describe('SharedDataContract', () => {
     describe('#createSharedData', () => {
 
         it('should create a shared data', async () => {
-            await contract.createSharedData(ctx, '1003', 'JhonDoe@somewhere.com', 'shared data 1003 value', 1623856110467);
-            ctx.stub.putState.should.have.been.calledWithMatch('1003', Buffer.from('{"id":"1003","ownerId":"JhonDoe@somewhere.com","sharedWith":"","sharedDataDescription":"shared data 1003 value","mode":"createSharedData","updated":1623856110467,"requester":"JhonDoe@somewhere.com","permission":3}'));
+            await contract.createSharedData(ctx, '1003', 'JhonDoe@somewhere.com', 'shared data 1003 value', 'bucket', 'resource', 1623856110467);
+            ctx.stub.putState.should.have.been.calledWithMatch('1003', Buffer.from('{"id":"1003","ownerId":"JhonDoe@somewhere.com","sharedWith":"","sharedDataDescription":"shared data 1003 value","mode":"createSharedData","updated":1623856110467,"requester":"JhonDoe@somewhere.com","permission":3,"bucket":"bucket","resourceLocation":"resource"}'));
         });
 
         it('should throw an error for a shared data that already exists', async () => {
-            await contract.createSharedData(ctx, '1001', 'JhonDoe@somewhere.com', 'myvalue', 1623856110467).should.be.rejectedWith(/The shared data 1001 already exists/);
+            await contract.createSharedData(ctx, '1001', 'JhonDoe@somewhere.com', 'myvalue', 'bucket', 'resource', 1623856110467).should.be.rejectedWith(/The shared data 1001 already exists/);
         });
 
     });
@@ -81,22 +81,9 @@ describe('SharedDataContract', () => {
     describe('#updateSharedData', () => {
 
         it('should throw an error for a shared data that does not exist', async () => {
-            await contract.updateSharedData(ctx, '1003', 'JhonDoe@somewhere.com', 'shared data 1003 new value', 1623856110467).should.be.rejectedWith(/The shared data 1003 does not exists/);
+            await contract.updateSharedData(ctx, '1003', 'JhonDoe@somewhere.com', 'shared data 1003 new value','bucket' , 'resource', 1623856110467).should.be.rejectedWith(/The shared data 1003 does not exists/);
         });
 
     });
-
-    // describe('#deleteSharedData', () => {
-
-    //     it('should delete a shared data', async () => {
-    //         await contract.deleteSharedData(ctx, '1001', 'JhonDoe@somewhere.com');
-    //         ctx.stub.deleteState.should.have.been.calledOnceWithExactly('1001');
-    //     });
-
-    //     it('should throw an error for a shared data that does not exist', async () => {
-    //         await contract.deleteSharedData(ctx, '1003', 'JhonDoe@somewhere.com').should.be.rejectedWith(/The shared data 1003 does not exist/);
-    //     });
-
-    // });
 
 });
