@@ -14,6 +14,8 @@
             "001",
             "JohnDoe@somewhere.com",
             "My awesome data",
+            "myBucket",
+            "myResourceLocation",
             1623856110467
         ],
         "transientData": {}
@@ -34,6 +36,8 @@
             "001",
             "JohnDoe@somewhere.com",
             "My awesome data",
+            "myBucket",
+            "myResourceLocation",
             1623856110467
         ],
         "transientData": {}
